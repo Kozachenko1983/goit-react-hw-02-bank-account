@@ -52,5 +52,6 @@
   },
   "plugins": [
     "@babel/plugin-proposal-class-properties"
-  ]
+  ],
+  "homepage": "https://kozachenko1983.github.io/goit-react-hw-02-bank-account/."
 }
