@@ -39,7 +39,7 @@ export default class Dashboard extends Component {
     const balance = income - expenses;
     return (
       <div className={style.wrapper}>
-        <Controls onDeposit={this.onDeposit} balance={balance} />
+        <Controls onTransaction={this.onTransaction} balance={balance} />
         <Balance income={income} expenses={expenses} balance={balance} />
         {!!items.length && <TransactionHistory items={items} />}
       </div>
