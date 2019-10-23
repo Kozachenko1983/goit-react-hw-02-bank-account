@@ -6,8 +6,7 @@ import style from './Controls.module.css';
 
 export default class Controls extends Component {
   static propTypes = {
-    onDeposit: PropTypes.func.isRequired,
-    onWithdrawal: PropTypes.func.isRequired,
+    onTransaction: PropTypes.func.isRequired,
     balance: PropTypes.number.isRequired,
   };
 
@@ -24,27 +23,22 @@ export default class Controls extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-
+    const type = e.target.name;
     if (this.state.amount <= 0) {
       this.notify('Введите сумму для проведения операции!');
-    } else {
-      if (e.target.name === 'Deposit') {
-        this.props.onDeposit({ ...this.state });
-        this.setState({
-          amount: '',
-        });
-      }
-      if (e.target.name === 'Withdraw') {
-        if (this.props.balance >= this.state.amount) {
-          this.props.onWithdrawal({ ...this.state });
-        } else {
-          this.notify('На счету недостаточно средств для проведения операции!');
-        }
-        this.setState({
-          amount: '',
-        });
-      }
+      return;
     }
+    if (
+      e.target.name === 'Withdraw' &&
+      this.props.balance < this.state.amount
+    ) {
+      this.notify('На счету недостаточно средств для проведения операции! ');
+      return;
+    }
+    this.props.onTransaction({ ...this.state }, type);
+    this.setState({
+      amount: '',
+    });
   };
 
   notify = msg => {

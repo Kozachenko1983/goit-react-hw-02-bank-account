@@ -8,56 +8,40 @@ import style from './Dashboard.module.css';
 export default class Dashboard extends Component {
   state = {
     items: [],
-    income: 0,
-    expenses: 0,
-    balance: 0,
   };
 
-  onBalance = () => {
-    this.setState(prevState => ({
-      balance: prevState.income - prevState.expenses,
-    }));
-  };
-
-  onDeposit = dataInput => {
+  onTransaction = (dataInput, typeName) => {
     const data = {
       ...dataInput,
       id: shortid(),
       date: new Date().toLocaleString(),
-      type: 'Deposit',
+      type: typeName,
     };
     this.setState(prevState => ({
       items: [...prevState.items, data],
-      income: prevState.income + dataInput.amount,
     }));
-    this.onBalance();
   };
 
-  onWithdrawal = dataInput => {
-    const data = {
-      ...dataInput,
-      id: shortid(),
-      date: new Date().toLocaleString(),
-      type: 'Withdraw',
-    };
-    this.setState(prevState => ({
-      items: [...prevState.items, data],
-      expenses: prevState.expenses + dataInput.amount,
-    }));
-    this.onBalance();
+  onSumm = (items, typeTrancaction) => {
+    return items
+      .filter(el => el.type === typeTrancaction)
+      .reduce((acc, el) => {
+        let summ = acc;
+        summ += el.amount;
+        return summ;
+      }, 0);
   };
 
   render() {
-    const { items, income, expenses, balance } = this.state;
+    const { items } = this.state;
+    const income = this.onSumm(items, 'Deposit');
+    const expenses = this.onSumm(items, 'Withdraw');
+    const balance = income - expenses;
     return (
       <div className={style.wrapper}>
-        <Controls
-          onDeposit={this.onDeposit}
-          onWithdrawal={this.onWithdrawal}
-          balance={balance}
-        />
+        <Controls onDeposit={this.onDeposit} balance={balance} />
         <Balance income={income} expenses={expenses} balance={balance} />
-        <TransactionHistory items={items} />
+        {!!items.length && <TransactionHistory items={items} />}
       </div>
     );
   }
